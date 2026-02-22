@@ -4,6 +4,9 @@ import com.sudhan.userservice.DTOs.LoginRequestDTO;
 import com.sudhan.userservice.DTOs.SignupRequestDTO;
 import com.sudhan.userservice.DTOs.TokenDTO;
 import com.sudhan.userservice.DTOs.UserDTO;
+import com.sudhan.userservice.Exceptions.InvalidTokenException;
+import com.sudhan.userservice.Exceptions.PasswordMismatchException;
+import com.sudhan.userservice.model.Token;
 import com.sudhan.userservice.model.User;
 import com.sudhan.userservice.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,12 +37,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public TokenDTO login(@RequestBody LoginRequestDTO requestDto) {
-        return null;
+    public TokenDTO login(@RequestBody LoginRequestDTO requestDto) throws PasswordMismatchException {
+        Token token = userService.login(requestDto.getEmail(),requestDto.getPassword());
+        return TokenDTO.from(token);
     }
 
     @GetMapping("/validate/{tokenValue}")
-    public UserDTO validateToken(@PathVariable("tokenValue") String tokenValue) {
-        return null;
+    public UserDTO validateToken(@PathVariable("tokenValue") String tokenValue) throws InvalidTokenException {
+        User user = userService.validateToken(tokenValue);
+        return UserDTO.from(user);
     }
 }
